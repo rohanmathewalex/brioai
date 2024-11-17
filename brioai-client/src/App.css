@@ -4,6 +4,13 @@
   padding: 2rem;
   text-align: center;
 }
+/* src/index.css or in a global styles file */
+body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
 
 .logo {
   height: 6em;

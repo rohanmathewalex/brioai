@@ -16,6 +16,11 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    role: {
+        type: String,
+        enum: ['free', 'premium', 'enterprise'], // Define roles as per your needs
+        default: 'free', // Default to 'free' tier
+      },
 });
 
 //Hash password before saving user
