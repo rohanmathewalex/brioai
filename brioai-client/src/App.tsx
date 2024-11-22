@@ -6,6 +6,7 @@ import HomePage from "./components/HomePage";
 import SignupForm from "./components/SignupForm";
 import LoginForm from "./components/LoginForm";
 import Dashboard from "./components/Dashboard";
+import Summarize from "./components/Summarize";
 import { AuthProvider } from "./context/AuthContext";
 import Profile from "./components/Profile";
 
@@ -21,6 +22,7 @@ const App: React.FC = () => {
             <Route path="/login" element={<LoginForm />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/profile" element={<Profile />} />
+            <Route path="/summarize" element={<Summarize />} />
           </Routes>
         </Layout>
       </Router>
