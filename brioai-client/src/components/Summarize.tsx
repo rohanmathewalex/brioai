@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   Box,
   Container,
@@ -11,20 +11,28 @@ import {
   CardContent,
   CardActions,
   Divider,
-} from '@mui/material';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import ContentCopyIcon from '@mui/icons-material/ContentCopy';
-import { useNavigate } from 'react-router-dom';
+} from "@mui/material";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
+import { useNavigate } from "react-router-dom";
 
-const Summarize = () => {
-  const [text, setText] = useState('');
-  const [summary, setSummary] = useState('');
-  const [savedSummaries, setSavedSummaries] = useState(() => {
-    const saved = localStorage.getItem('savedSummaries');
+interface SavedSummary {
+  name: string;
+  text: string;
+}
+
+const Summarize: React.FC = () => {
+  const [text, setText] = useState<string>("");
+  const [summary, setSummary] = useState<string>("");
+  const [savedSummaries, setSavedSummaries] = useState<SavedSummary[]>(() => {
+    const saved = localStorage.getItem("savedSummaries");
     return saved ? JSON.parse(saved) : [];
   });
-  const [summaryName, setSummaryName] = useState('');
+  const [summaryName, setSummaryName] = useState<string>("");
   const navigate = useNavigate();
+
+  // Replace `ai` with your Chrome Summarizer API setup if needed
+  const ai = (window as any).ai;
 
   const handleSummarize = async () => {
     try {
@@ -32,42 +40,47 @@ const Summarize = () => {
       const result = await summarizer.summarize(text);
       setSummary(result);
     } catch (error) {
-      console.error('Error during summarization:', error);
+      console.error("Error during summarization:", error);
     }
   };
 
   const handleSaveSummary = () => {
     if (summary && summaryName) {
-      const newSummary = { name: summaryName, text: summary };
+      const newSummary: SavedSummary = { name: summaryName, text: summary };
       const updatedSummaries = [...savedSummaries, newSummary];
       setSavedSummaries(updatedSummaries);
-      localStorage.setItem('savedSummaries', JSON.stringify(updatedSummaries));
-      setSummaryName(''); // Reset the name input
+      localStorage.setItem("savedSummaries", JSON.stringify(updatedSummaries));
+      setSummaryName(""); // Reset the name input
+      setSummary(""); // Clear the summary text
+      setText(""); // Clear the text input
     }
   };
 
-  const handleCopyToClipboard = (textToCopy) => {
+  const handleCopyToClipboard = (textToCopy: string) => {
     navigator.clipboard.writeText(textToCopy);
-    alert('Copied to clipboard!');
+    alert("Copied to clipboard!");
   };
 
   return (
     <Container maxWidth="md" sx={{ mt: 4 }}>
       {/* Go Back Button */}
-      <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
+      <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
         <IconButton
-          onClick={() => navigate('/dashboard')}
+          onClick={() => navigate("/dashboard")}
           sx={{
-            backgroundColor: '#f1f3f5',
-            color: '#343a40',
-            '&:hover': {
-              backgroundColor: '#e9ecef',
+            backgroundColor: "#f1f3f5",
+            color: "#343a40",
+            "&:hover": {
+              backgroundColor: "#e9ecef",
             },
           }}
         >
           <ArrowBackIcon />
         </IconButton>
-        <Typography variant="subtitle1" sx={{ ml: 2, color: '#343a40', fontWeight: 'bold' }}>
+        <Typography
+          variant="subtitle1"
+          sx={{ ml: 2, color: "#343a40", fontWeight: "bold" }}
+        >
           Go Back to Dashboard
         </Typography>
       </Box>
@@ -89,18 +102,18 @@ const Summarize = () => {
         onChange={(e) => setText(e.target.value)}
         sx={{
           mb: 3,
-          '& .MuiOutlinedInput-root': {
+          "& .MuiOutlinedInput-root": {
             padding: 2,
-            '&:hover fieldset': {
-              borderColor: '#495057',
+            "&:hover fieldset": {
+              borderColor: "#495057",
             },
-            '&.Mui-focused fieldset': {
-              borderColor: '#007bff',
+            "&.Mui-focused fieldset": {
+              borderColor: "#007bff",
             },
           },
-          '& textarea': {
-            overflow: 'auto',
-            resize: 'none',
+          "& textarea": {
+            overflow: "auto",
+            resize: "none",
           },
         }}
       />
@@ -117,7 +130,7 @@ const Summarize = () => {
           <Typography variant="h6" gutterBottom>
             Here’s your summary:
           </Typography>
-          <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap', mb: 2 }}>
+          <Typography variant="body1" sx={{ whiteSpace: "pre-wrap", mb: 2 }}>
             {summary}
           </Typography>
           <TextField
@@ -133,7 +146,7 @@ const Summarize = () => {
             color="secondary"
             onClick={handleSaveSummary}
             sx={{
-              textTransform: 'none',
+              textTransform: "none",
               mt: 2,
             }}
           >
@@ -149,14 +162,22 @@ const Summarize = () => {
       </Typography>
       {savedSummaries.length > 0 ? (
         <Grid container spacing={3}>
-          {savedSummaries.map((saved, index) => (
+          {savedSummaries.map((saved: SavedSummary, index: number) => (
             <Grid item xs={12} sm={6} key={index}>
-              <Card sx={{ boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', borderRadius: 2 }}>
+              <Card
+                sx={{
+                  boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                  borderRadius: 2,
+                }}
+              >
                 <CardContent>
                   <Typography variant="h6" gutterBottom>
                     {saved.name}
                   </Typography>
-                  <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap', mb: 2 }}>
+                  <Typography
+                    variant="body2"
+                    sx={{ whiteSpace: "pre-wrap", mb: 2 }}
+                  >
                     {saved.text}
                   </Typography>
                 </CardContent>
@@ -167,10 +188,10 @@ const Summarize = () => {
                     onClick={() => handleCopyToClipboard(saved.text)}
                     startIcon={<ContentCopyIcon />}
                     sx={{
-                      textTransform: 'none',
-                      color: '#495057',
-                      '&:hover': {
-                        backgroundColor: '#e9ecef',
+                      textTransform: "none",
+                      color: "#495057",
+                      "&:hover": {
+                        backgroundColor: "#e9ecef",
                       },
                     }}
                   >
