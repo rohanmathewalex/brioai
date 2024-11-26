@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Container,
@@ -11,6 +11,7 @@ import {
   CardContent,
   CardActions,
   Divider,
+  CircularProgress,
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
@@ -29,18 +30,43 @@ const Summarize: React.FC = () => {
     return saved ? JSON.parse(saved) : [];
   });
   const [summaryName, setSummaryName] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
   const navigate = useNavigate();
 
-  // Replace `ai` with your Chrome Summarizer API setup if needed
-  const ai = (window as any).ai;
+  const ai = (window as any).ai; // Replace this with actual Summarizer API setup if needed
+  const [summarizer, setSummarizer] = useState<any>(null);
+
+  useEffect(() => {
+    // Create summarizer instance only once
+    const initializeSummarizer = async () => {
+      try {
+        const instance = await ai.summarizer.create();
+        setSummarizer(instance);
+      } catch (error) {
+        console.error("Error initializing summarizer:", error);
+      }
+    };
+    initializeSummarizer();
+  }, []);
 
   const handleSummarize = async () => {
+    if (!text.trim()) {
+      alert("Please enter some text to summarize.");
+      return;
+    }
+    if (!summarizer) {
+      alert("Summarizer is not ready. Please try again later.");
+      return;
+    }
+    setLoading(true); // Show loading spinner
     try {
-      const summarizer = await ai.summarizer.create();
       const result = await summarizer.summarize(text);
       setSummary(result);
     } catch (error) {
       console.error("Error during summarization:", error);
+      alert("Failed to summarize the text. Please try again.");
+    } finally {
+      setLoading(false); // Hide loading spinner
     }
   };
 
@@ -53,6 +79,8 @@ const Summarize: React.FC = () => {
       setSummaryName(""); // Reset the name input
       setSummary(""); // Clear the summary text
       setText(""); // Clear the text input
+    } else {
+      alert("Please provide a name for the summary before saving.");
     }
   };
 
@@ -121,9 +149,10 @@ const Summarize: React.FC = () => {
         variant="contained"
         color="primary"
         onClick={handleSummarize}
+        disabled={loading}
         sx={{ mb: 3 }}
       >
-        Summarize
+        {loading ? <CircularProgress size={24} /> : "Summarize"}
       </Button>
       {summary && (
         <Box>
