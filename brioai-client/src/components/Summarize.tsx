@@ -15,6 +15,7 @@ import {
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
+import DeleteIcon from "@mui/icons-material/Delete";
 import { useNavigate } from "react-router-dom";
 
 interface SavedSummary {
@@ -87,6 +88,12 @@ const Summarize: React.FC = () => {
   const handleCopyToClipboard = (textToCopy: string) => {
     navigator.clipboard.writeText(textToCopy);
     alert("Copied to clipboard!");
+  };
+
+  const handleDeleteSummary = (index: number) => {
+    const updatedSummaries = savedSummaries.filter((_, i) => i !== index);
+    setSavedSummaries(updatedSummaries);
+    localStorage.setItem("savedSummaries", JSON.stringify(updatedSummaries));
   };
 
   return (
@@ -226,6 +233,17 @@ const Summarize: React.FC = () => {
                   >
                     Copy to Clipboard
                   </Button>
+                  <IconButton
+                    onClick={() => handleDeleteSummary(index)}
+                    sx={{
+                      color: "#ff1744",
+                      "&:hover": {
+                        backgroundColor: "#ffebee",
+                      },
+                    }}
+                  >
+                    <DeleteIcon />
+                  </IconButton>
                 </CardActions>
               </Card>
             </Grid>
