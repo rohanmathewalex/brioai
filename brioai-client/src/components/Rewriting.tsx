@@ -18,9 +18,9 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 const WritingAndRewriting: React.FC = () => {
   const [mode, setMode] = useState<string>("rewrite"); // Options: "write" or "rewrite"
-  const [inputText, setInputText] = useState<string>(""); // Input text for rewrite or task for write
-  const [rewrittenText, setRewrittenText] = useState<string>(""); // Output
-  const [context, setContext] = useState<string>(""); // Context for writing/rewriting
+  const [inputText, setInputText] = useState<string>(""); // Input text
+  const [rewrittenText, setRewrittenText] = useState<string>(""); // Output text
+  const [context, setContext] = useState<string>(""); // Context for write
   const [tone, setTone] = useState<string>("neutral");
   const [format, setFormat] = useState<string>("plain-text");
   const [length, setLength] = useState<string>("medium");
@@ -28,18 +28,17 @@ const WritingAndRewriting: React.FC = () => {
   const [writer, setWriter] = useState<any>(null); // Writer instance
   const [rewriter, setRewriter] = useState<any>(null); // Rewriter instance
 
+  // Initialize APIs
   useEffect(() => {
-    // Initialize both Writer and Rewriter APIs
     const initializeAPIs = async () => {
       try {
         const writerInstance = await (window as any).ai.writer.create();
-        setWriter(writerInstance);
-
         const rewriterInstance = await (window as any).ai.rewriter.create();
+        setWriter(writerInstance);
         setRewriter(rewriterInstance);
       } catch (error) {
         console.error("Error initializing APIs:", error);
-        alert("Failed to initialize Writer and Rewriter APIs. Please try again.");
+        alert("Failed to initialize Writer and Rewriter APIs. Please check your setup.");
       }
     };
     initializeAPIs();
@@ -58,28 +57,28 @@ const WritingAndRewriting: React.FC = () => {
 
     setLoading(true);
     try {
+      let result;
       if (mode === "write") {
         // Call Writer API
-        const result = await writer.write(inputText, {
-          context,
+        result = await writer.write(inputText, {
+          context: context || undefined,
           tone,
           format,
           length,
         });
-        setRewrittenText(result);
       } else {
-        // Call Rewriter API
-        const result = await rewriter.rewrite(inputText, {
-          context,
-          tone,
-          format,
-          length,
-        });
-        setRewrittenText(result);
+        // Call Rewriter API (Minimal Parameters)
+        result = await rewriter.rewrite(inputText);
       }
-    } catch (error) {
-      console.error("Error during writing/rewriting:", error);
-      alert("Failed to process your request. Please try again.");
+
+      setRewrittenText(result);
+    } catch (error: any) {
+      console.error("Action Error:", error);
+      alert(
+        `Failed to ${
+          mode === "write" ? "write" : "rewrite"
+        } the text. Error: ${error.message || "Unknown error occurred."}`
+      );
     } finally {
       setLoading(false);
     }
@@ -94,9 +93,7 @@ const WritingAndRewriting: React.FC = () => {
           sx={{
             backgroundColor: "#f1f3f5",
             color: "#343a40",
-            "&:hover": {
-              backgroundColor: "#e9ecef",
-            },
+            "&:hover": { backgroundColor: "#e9ecef" },
           }}
         >
           <ArrowBackIcon />
@@ -144,55 +141,59 @@ const WritingAndRewriting: React.FC = () => {
       />
 
       {/* Context */}
-      <TextField
-        fullWidth
-        variant="outlined"
-        placeholder="Enter context (e.g., I'm a long-standing customer)"
-        value={context}
-        onChange={(e) => setContext(e.target.value)}
-        sx={{ mb: 3 }}
-      />
+      {mode === "write" && (
+        <TextField
+          fullWidth
+          variant="outlined"
+          placeholder="Enter context (e.g., I'm a long-standing customer)"
+          value={context}
+          onChange={(e) => setContext(e.target.value)}
+          sx={{ mb: 3 }}
+        />
+      )}
 
       {/* Options: Tone, Format, Length */}
-      <Box sx={{ display: "flex", gap: 2, mb: 3 }}>
-        <FormControl fullWidth>
-          <InputLabel id="tone-label">Tone</InputLabel>
-          <Select
-            labelId="tone-label"
-            value={tone}
-            onChange={(e) => setTone(e.target.value)}
-          >
-            <MenuItem value="neutral">Neutral</MenuItem>
-            <MenuItem value="formal">Formal</MenuItem>
-            <MenuItem value="casual">Casual</MenuItem>
-          </Select>
-        </FormControl>
+      {mode === "write" && (
+        <Box sx={{ display: "flex", gap: 2, mb: 3 }}>
+          <FormControl fullWidth>
+            <InputLabel id="tone-label">Tone</InputLabel>
+            <Select
+              labelId="tone-label"
+              value={tone}
+              onChange={(e) => setTone(e.target.value)}
+            >
+              <MenuItem value="neutral">Neutral</MenuItem>
+              <MenuItem value="formal">Formal</MenuItem>
+              <MenuItem value="casual">Casual</MenuItem>
+            </Select>
+          </FormControl>
 
-        <FormControl fullWidth>
-          <InputLabel id="format-label">Format</InputLabel>
-          <Select
-            labelId="format-label"
-            value={format}
-            onChange={(e) => setFormat(e.target.value)}
-          >
-            <MenuItem value="plain-text">Plain Text</MenuItem>
-            <MenuItem value="markdown">Markdown</MenuItem>
-          </Select>
-        </FormControl>
+          <FormControl fullWidth>
+            <InputLabel id="format-label">Format</InputLabel>
+            <Select
+              labelId="format-label"
+              value={format}
+              onChange={(e) => setFormat(e.target.value)}
+            >
+              <MenuItem value="plain-text">Plain Text</MenuItem>
+              <MenuItem value="markdown">Markdown</MenuItem>
+            </Select>
+          </FormControl>
 
-        <FormControl fullWidth>
-          <InputLabel id="length-label">Length</InputLabel>
-          <Select
-            labelId="length-label"
-            value={length}
-            onChange={(e) => setLength(e.target.value)}
-          >
-            <MenuItem value="short">Short</MenuItem>
-            <MenuItem value="medium">Medium</MenuItem>
-            <MenuItem value="long">Long</MenuItem>
-          </Select>
-        </FormControl>
-      </Box>
+          <FormControl fullWidth>
+            <InputLabel id="length-label">Length</InputLabel>
+            <Select
+              labelId="length-label"
+              value={length}
+              onChange={(e) => setLength(e.target.value)}
+            >
+              <MenuItem value="short">Short</MenuItem>
+              <MenuItem value="medium">Medium</MenuItem>
+              <MenuItem value="long">Long</MenuItem>
+            </Select>
+          </FormControl>
+        </Box>
+      )}
 
       {/* Action Button */}
       <Button
