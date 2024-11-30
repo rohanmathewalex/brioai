@@ -9,6 +9,7 @@ import Dashboard from "./components/Dashboard";
 import Summarize from "./components/Summarize";
 import { AuthProvider } from "./context/AuthContext";
 import Profile from "./components/Profile";
+import Rewriting from "./components/Rewriting";
 
 const App: React.FC = () => {
   return (
@@ -23,6 +24,7 @@ const App: React.FC = () => {
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/summarize" element={<Summarize />} />
+            <Route path="/rewrite/" element={< Rewriting/>} />
           </Routes>
         </Layout>
       </Router>
