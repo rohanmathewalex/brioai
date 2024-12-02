@@ -10,6 +10,7 @@ import Summarize from "./components/Summarize";
 import { AuthProvider } from "./context/AuthContext";
 import Profile from "./components/Profile";
 import Rewriting from "./components/Rewriting";
+import DynamicPromptGeneration from "./components/DynamicPromptGeneration";
 
 const App: React.FC = () => {
   return (
@@ -25,6 +26,7 @@ const App: React.FC = () => {
             <Route path="/profile" element={<Profile />} />
             <Route path="/summarize" element={<Summarize />} />
             <Route path="/rewrite/" element={< Rewriting/>} />
+            <Route path="/generate-prompts" element={<DynamicPromptGeneration />} />
           </Routes>
         </Layout>
       </Router>
