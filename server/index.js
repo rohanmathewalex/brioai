@@ -24,7 +24,10 @@ mongoose.connect(process.env.MONGO_URI, {
 })
 .then(() => console.log('MongoDB Connected'))
 .catch((err) => console.log(err));
-
+// Root route for welcome message
+app.get('/', (req, res) => {
+    res.status(200).json({ message: 'Welcome to BrioAI API! Your AI-powered backend is up and running.' });
+});
 //Routes
 app.use('/api/auth', require('./routes/authRoutes'));
 
