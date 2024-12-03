@@ -22,14 +22,14 @@ import EditIcon from "@mui/icons-material/Edit";
 import LightbulbIcon from "@mui/icons-material/Lightbulb";
 import TranslateIcon from "@mui/icons-material/Translate";
 import UpgradeIcon from "@mui/icons-material/Upgrade";
-import { useAuth } from "../context/AuthContext";
+ 
 import summarizeImage from "../assets/images/summarize_content.png";
 import rewriteImage from "../assets/images/rewrite_content.png";
 import generatePromptsImage from "../assets/images/generate_prompts.png";
 import translateImage from "../assets/images/translate_content.png";
 
 const Dashboard: React.FC = () => {
-  const { user } = useAuth();
+  // const { user } = useAuth();
 
   const features = [
     { title: "Summarize Content", image: summarizeImage, link: "/summarize" },
