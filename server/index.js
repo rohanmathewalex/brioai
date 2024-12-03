@@ -10,7 +10,7 @@ const PORT = process.eventNames.PORT || 5000;
 app.use(express.json());
 //Middleware 
 app.use(cors({
-    origin: 'http://localhost:5173', // For local testing
+    origin: 'https://brio-ai.vercel.app/', // For local testing
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true,
 }));
