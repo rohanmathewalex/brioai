@@ -10,10 +10,11 @@ const PORT = process.eventNames.PORT || 5000;
 app.use(express.json());
 //Middleware 
 app.use(cors({
-    origin: 'https://brio-ai.vercel.app/', // For local testing
+    origin: 'https://brio-ai.vercel.app', // Remove trailing slash
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true,
 }));
+
 
 
 //connect to mongoDB 
